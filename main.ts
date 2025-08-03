@@ -17,14 +17,8 @@ namespace SpriteKind {
 }
 namespace StatusBarKind {
     export const Shield_1 = StatusBarKind.create()
+    export const Shield_2 = StatusBarKind.create()
 }
-/**
- * Removed splash21-26 variables - simplified game flow
- */
-/**
- * Removed splash player selection variables - simplified game flow
- */
-// Removed statusbar2 and jet2 - simplified to single player
 sprites.onOverlap(SpriteKind.Weapon1, SpriteKind.ContWeapon, function (sprite, otherSprite) {
     sprites.destroy(sprite)
     doExplosion(otherSprite)
