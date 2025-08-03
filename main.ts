@@ -17,8 +17,16 @@ namespace SpriteKind {
 }
 namespace StatusBarKind {
     export const Shield_1 = StatusBarKind.create()
-    export const Shield_2 = StatusBarKind.create()
 }
+/**
+ * Removed splash21-26 variables - simplified game flow
+ */
+/**
+ * Removed splash player selection variables - simplified game flow
+ */
+/**
+ * Removed statusbar2 and jet2 - simplified to single player
+ */
 sprites.onOverlap(SpriteKind.Weapon1, SpriteKind.ContWeapon, function (sprite, otherSprite) {
     sprites.destroy(sprite)
     doExplosion(otherSprite)
@@ -36,9 +44,6 @@ function turrelBlastShot () {
         true
         )
         turrelBlast.setFlag(SpriteFlag.AutoDestroy, true)
-        if (gamemp == 1) {
-            turrelBlast.follow(jet1, 22)
-        }
         // Simplified to single player - always target jet1
         turrelBlast.follow(jet1, 22)
         sprites.destroy(turrelBot, effects.fire, 500)
@@ -61,20 +66,6 @@ sprites.onOverlap(SpriteKind.Blast, SpriteKind.ContShield, function (sprite21, o
     sprites.destroy(sprite21)
     doExplosion(otherSprite19)
 })
-controller.player2.onButtonEvent(ControllerButton.B, ControllerButtonEvent.Pressed, function () {
-    // game.reset()
-    if (gamescreen == 3) {
-    	
-    } else {
-        if (gamescreen == 2) {
-            doStartGame()
-        }
-        if (gamescreen == 1) {
-            gamemp = 3
-            doStartGame()
-        }
-    }
-})
 sprites.onOverlap(SpriteKind.Weapon1, SpriteKind.ContShield, function (sprite27, otherSprite25) {
     sprites.destroy(sprite27)
     doExplosion(otherSprite25)
@@ -91,7 +82,8 @@ function spawnMineHoming () {
     333,
     true
     )
-    mineHoming.setFlag(SpriteFlag.AutoDestroy, true)    // Simplified to single player - always target jet1
+    // Simplified to single player - always target jet1
+    mineHoming.setFlag(SpriteFlag.AutoDestroy, true)
     mineHoming.follow(jet1, 24)
 }
 // Removed Weapon2 collision handlers - simplified to single player
@@ -99,13 +91,13 @@ sprites.onOverlap(SpriteKind.Weapon1, SpriteKind.Blast, function (sprite30, othe
     otherSprite28.y += randint(-15, -25)
     otherSprite28.x += randint(-10, 10)
 })
+// Simplified: removed player selection buttons - any button starts game
 function showSplash1 () {
     scene.setBackgroundImage(assets.image`splash1bg`)
     sprites.destroyAllSpritesOfKind(SpriteKind.Splash)
     splash1title = sprites.create(assets.image`splash1title3`, SpriteKind.Splash)
     splash1title.setScale(0.9, ScaleAnchor.Middle)
     splash1title.setPosition(80, 50)
-    // Simplified: removed player selection buttons - any button starts game
 }
 sprites.onOverlap(SpriteKind.Blast, SpriteKind.ContWeapon, function (sprite15, otherSprite14) {
     sprites.destroy(sprite15)
@@ -131,16 +123,10 @@ function doExplosion (expsprite: Sprite) {
 sprites.onDestroyed(SpriteKind.Turrel, function (sprite3) {
     turrels += -1
 })
-// Removed spawnJet2() function - simplified to single player
-controller.player2.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Pressed, function () {
-    if (gamescreen == 3) {
-        // Removed jetShot2() call - simplified to single player
-    }
+controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (gamescreen == 2) {
-        doStartGame()
-    }
-    if (gamescreen == 1) {
-        gamemp = 1
+        jetShot1(weaponType1)
+    } else if (gamescreen == 1) {
         doStartGame()
     }
 })
@@ -304,7 +290,8 @@ sprites.onOverlap(SpriteKind.Blast, SpriteKind.MineHoming, function (sprite2, ot
 // Removed Weapon2 collision handlers - simplified to single player
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Blast, function (sprite32, otherSprite30) {
     music.play(music.createSoundEffect(WaveShape.Noise, 1, 147, 99, 0, 404, SoundExpressionEffect.Vibrato, InterpolationCurve.Linear), music.PlaybackMode.InBackground)
-    sprites.destroyAllSpritesOfKind(SpriteKind.Shield)    // Simplified to single player - only handle jet1
+    // Simplified to single player - only handle jet1
+    sprites.destroyAllSpritesOfKind(SpriteKind.Shield)
     controller.player1.moveSprite(jet1, 4, 2)
     statusbar1.value += randint(-16, -8)
     doShieldImpact(sprite32)
@@ -317,7 +304,8 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Blast, function (sprite32, other
 // Removed Weapon2 collision handlers - simplified to single player
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Turrel, function (sprite34, otherSprite32) {
     music.play(music.createSoundEffect(WaveShape.Noise, 1, 147, 99, 0, 404, SoundExpressionEffect.Vibrato, InterpolationCurve.Linear), music.PlaybackMode.InBackground)
-    sprites.destroyAllSpritesOfKind(SpriteKind.Shield)    // Simplified to single player - only handle jet1
+    // Simplified to single player - only handle jet1
+    sprites.destroyAllSpritesOfKind(SpriteKind.Shield)
     controller.player1.moveSprite(jet1, 4, 2)
     statusbar1.value += randint(-15, -5)
     doShieldImpact(sprite34)
@@ -351,6 +339,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Asteroid, function (sprite23, ot
     sprites.destroyAllSpritesOfKind(SpriteKind.Shield)
     controller.player1.moveSprite(jet1, 80, 30)
 })
+// Removed jet2 handling - simplified to single player
 sprites.onOverlap(SpriteKind.Player, SpriteKind.MineStatic, function (sprite24, otherSprite22) {
     music.play(music.createSoundEffect(WaveShape.Noise, 1, 147, 99, 0, 404, SoundExpressionEffect.Vibrato, InterpolationCurve.Linear), music.PlaybackMode.InBackground)
     sprites.destroyAllSpritesOfKind(SpriteKind.Shield)
@@ -362,8 +351,8 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.MineStatic, function (sprite24, 
         scene.cameraShake(10, 200)
         pause(200)
         sprites.destroyAllSpritesOfKind(SpriteKind.Shield)
-        controller.player1.moveSprite(jet1, 80, 30)    }
-    // Removed jet2 handling - simplified to single player
+        controller.player1.moveSprite(jet1, 80, 30)
+    }
 })
 sprites.onOverlap(SpriteKind.PlasmaShot, SpriteKind.ContWeapon, function (sprite33, otherSprite31) {
     sprites.destroy(sprite33)
@@ -381,14 +370,8 @@ statusbars.onZero(StatusBarKind.Shield_1, function (status2) {
     sprites.destroyAllSpritesOfKind(SpriteKind.Shield)
     controller.player1.moveSprite(jet1, 0, 0)
     doExplosion(jet1)
-    if (gamemp == 1) {
-        pause(1000)
-        game.gameOver(false)
-    }
-    if (gamemp == 3) {
-        gamemp = 2
-        statusbar1.setOffsetPadding(-30, -5)
-    }
+    pause(1000)
+    game.gameOver(false)
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.PlasmaShot, function (sprite11, otherSprite10) {
     music.play(music.createSoundEffect(WaveShape.Noise, 1, 147, 99, 0, 404, SoundExpressionEffect.Vibrato, InterpolationCurve.Linear), music.PlaybackMode.InBackground)
@@ -415,20 +398,6 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.MineHoming, function (sprite25, 
     pause(200)
     sprites.destroyAllSpritesOfKind(SpriteKind.Shield)
     controller.player1.moveSprite(jet1, 80, 30)
-})
-controller.player1.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Pressed, function () {
-    if (gamescreen == 3) {
-        if (!(gamemp == 2)) {
-            jetShot1(weaponType1)
-        }
-    }
-    if (gamescreen == 2) {
-        doStartGame()
-    }
-    if (gamescreen == 1) {
-        gamemp = 1
-        doStartGame()
-    }
 })
 function doShieldImpact (jet: Sprite) {
     jetShield = sprites.create(assets.image`infershield`, SpriteKind.Shield)
@@ -468,20 +437,6 @@ sprites.onOverlap(SpriteKind.PlasmaShot, SpriteKind.MineHoming, function (sprite
     sprites.destroy(sprite10)
     doExplosion(otherSprite9)
 })
-controller.player1.onButtonEvent(ControllerButton.B, ControllerButtonEvent.Pressed, function () {
-    // game.reset()
-    if (gamescreen == 3) {
-    	
-    } else {
-        if (gamescreen == 2) {
-            doStartGame()
-        }
-        if (gamescreen == 1) {
-            gamemp = 3
-            doStartGame()
-        }
-    }
-})
 function turrelPlasmaShot (thisTurrel: Sprite) {
     music.play(music.createSoundEffect(WaveShape.Triangle, 1578, 284, 230, 0, 443, SoundExpressionEffect.Vibrato, InterpolationCurve.Curve), music.PlaybackMode.InBackground)
     turrelPlasma = sprites.create(assets.image`turrelPlasma`, SpriteKind.PlasmaShot)
@@ -508,12 +463,6 @@ let turrelPlasma: Sprite = null
 let jetShield: Sprite = null
 let mineStatic: Sprite = null
 let asteroid: Sprite = null
-// Removed splash21-26 variables - simplified game flow
-let turrels = 0
-let explosion: Sprite = null
-// Removed splash player selection variables - simplified game flow  
-let splash1title: Sprite = null
-let mineHoming: Sprite = null
 let plasmasideleft90: Sprite = null
 let plasmasideright90: Sprite = null
 let plasmasideright45: Sprite = null
@@ -521,20 +470,18 @@ let plasmasideleft45: Sprite = null
 let plasma: Sprite = null
 let laser: Sprite = null
 let railgun: Sprite = null
-// Removed statusbar2 and jet2 - simplified to single player
+let turrels = 0
+let explosion: Sprite = null
+let splash1title: Sprite = null
+let mineHoming: Sprite = null
 let statusbar1: StatusBarSprite = null
 let jet1: Sprite = null
 let turrelBlast: Sprite = null
 let turrelBot: Sprite = null
-// Removed weaponType2 - simplified to single player
 let weaponType1 = 0
-let gamemp = 0
 let gamescreen = 0
-let splash22 = null
 gamescreen = 1
-gamemp = 1
 weaponType1 = 1
-// Removed weaponType2 initialization - simplified to single player
 showSplash1()
 game.onUpdate(function () {
     if (gamescreen == 3) {
