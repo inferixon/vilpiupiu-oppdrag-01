@@ -58,6 +58,14 @@ sprites.onOverlap(SpriteKind.Blast, SpriteKind.ContShield, function (sprite21, o
     sprites.destroy(sprite21)
     doExplosion(otherSprite19)
 })
+// Simplified: removed player selection buttons - any button starts game
+function showSplash () {
+    scene.setBackgroundImage(assets.image`splash1bg`)
+    sprites.destroyAllSpritesOfKind(SpriteKind.Splash)
+    splash1title = sprites.create(assets.image`splash_title`, SpriteKind.Splash)
+    splash1title.setScale(0.9, ScaleAnchor.Middle)
+    splash1title.setPosition(80, 50)
+}
 sprites.onOverlap(SpriteKind.Weapon1, SpriteKind.ContShield, function (sprite27, otherSprite25) {
     sprites.destroy(sprite27)
     doExplosion(otherSprite25)
@@ -83,14 +91,6 @@ sprites.onOverlap(SpriteKind.Weapon1, SpriteKind.Blast, function (sprite30, othe
     otherSprite28.y += randint(-15, -25)
     otherSprite28.x += randint(-10, 10)
 })
-// Simplified: removed player selection buttons - any button starts game
-function showSplash1 () {
-    scene.setBackgroundImage(assets.image`splash1bg`)
-    sprites.destroyAllSpritesOfKind(SpriteKind.Splash)
-    splash1title = sprites.create(assets.image`splash1title3`, SpriteKind.Splash)
-    splash1title.setScale(0.9, ScaleAnchor.Middle)
-    splash1title.setPosition(80, 50)
-}
 sprites.onOverlap(SpriteKind.Blast, SpriteKind.ContWeapon, function (sprite15, otherSprite14) {
     sprites.destroy(sprite15)
     doExplosion(otherSprite14)
@@ -464,8 +464,8 @@ let laser: Sprite = null
 let railgun: Sprite = null
 let turrels = 0
 let explosion: Sprite = null
-let splash1title: Sprite = null
 let mineHoming: Sprite = null
+let splash1title: Sprite = null
 let statusbar1: StatusBarSprite = null
 let jet1: Sprite = null
 let turrelBlast: Sprite = null
@@ -474,7 +474,7 @@ let weaponType1 = 0
 let gamescreen = 0
 gamescreen = 1
 weaponType1 = 1
-showSplash1()
+showSplash()
 game.onUpdate(function () {
     if (gamescreen == 3) {
         // Simplified to single player - only check weaponType1
