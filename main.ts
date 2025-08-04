@@ -19,7 +19,7 @@ function spawnStarship () {
     controller.moveSprite(starship, 100, 30)
 }
 function doStartGame () {
-    scene.setBackgroundImage(assets.image`splash-3`)
+    scene.setBackgroundImage(assets.image`main_bg`)
     sprites.destroyAllSpritesOfKind(SpriteKind.Splash)
     sprites.destroyAllSpritesOfKind(SpriteKind.Text)
     info.setScore(0)
@@ -103,7 +103,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.ContWeapon, function (sprite, ot
     }
 })
 function spawnAsteroid (num3: number) {
-    asteroid = sprites.create(assets.image`ast-1`, SpriteKind.Asteroid)
+    asteroid = sprites.create(assets.image`ast_null`, SpriteKind.Asteroid)
     if (num3 == 1) {
         animation.runImageAnimation(
         asteroid,
@@ -138,7 +138,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Asteroid, function (sprite, othe
     sprites.destroyAllSpritesOfKind(SpriteKind.Shield)
     controller.moveSprite(starship, 4, 2)
     shieldbar.value += randint(-10, -5)
-    shielded = sprites.create(assets.image`infershield`, SpriteKind.Shield)
+    shielded = sprites.create(assets.image`shield`, SpriteKind.Shield)
     shielded.setPosition(starship.x, starship.y)
     shielded.z += -4
     controller.moveSprite(shielded, 4, 2)
@@ -169,7 +169,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.MineHoming, function (sprite, ot
     sprites.destroyAllSpritesOfKind(SpriteKind.Shield)
     controller.moveSprite(starship, 4, 2)
     shieldbar.value += randint(-20, -15)
-    shielded = sprites.create(assets.image`infershield`, SpriteKind.Shield)
+    shielded = sprites.create(assets.image`shield`, SpriteKind.Shield)
     shielded.setPosition(starship.x, starship.y)
     shielded.z += -4
     controller.moveSprite(shielded, 4, 2)
