@@ -13,11 +13,10 @@ namespace StatusBarKind {
 }
 function spawnStarship () {
     starship = sprites.create(assets.image`starship`, SpriteKind.Player)
-    // Simplified to single player - always center the jet
     starship.setPosition(scene.screenWidth() / 2, scene.screenHeight() * 0.8)
     starship.setStayInScreen(true)
-    controller.player1.moveSprite(starship, 100, 30)
     shieldbar.value = 100
+    controller.moveSprite(starship, 100, 30)
 }
 function doStartGame () {
     scene.setBackgroundImage(assets.image`splash-3`)
@@ -35,7 +34,6 @@ sprites.onOverlap(SpriteKind.Weapon, SpriteKind.ContWeapon, function (sprite, ot
     sprites.destroy(sprite)
     doExplosion(otherSprite)
 })
-// Simplified: removed player selection buttons - any button starts game
 function showSplash () {
     scene.setBackgroundImage(assets.image`splash1bg`)
     sprites.destroyAllSpritesOfKind(SpriteKind.Splash)
@@ -43,11 +41,11 @@ function showSplash () {
     splash1title.setScale(0.9, ScaleAnchor.Middle)
     splash1title.setPosition(80, 50)
 }
-sprites.onOverlap(SpriteKind.Weapon, SpriteKind.ContShield, function (sprite27, otherSprite25) {
-    sprites.destroy(sprite27)
-    doExplosion(otherSprite25)
+sprites.onOverlap(SpriteKind.Player, SpriteKind.ContShield, function (sprite, otherSprite) {
+    sprites.destroy(otherSprite)
+    shieldbar.value += randint(5, 20)
+    music.play(music.createSoundEffect(WaveShape.Sine, 1132, 2381, 146, 0, 444, SoundExpressionEffect.Vibrato, InterpolationCurve.Curve), music.PlaybackMode.UntilDone)
 })
-// Removed jetShot2() function - simplified to single player
 function spawnMineHoming () {
     mineHoming = sprites.create(assets.image`bomb`, SpriteKind.MineHoming)
     mineHoming.setPosition(randint(0, scene.screenWidth()), 2)
@@ -59,16 +57,9 @@ function spawnMineHoming () {
     333,
     true
     )
-    // Simplified to single player - always target jet1
     mineHoming.setFlag(SpriteFlag.AutoDestroy, true)
     mineHoming.follow(starship, 24)
 }
-sprites.onOverlap(SpriteKind.Weapon, SpriteKind.Asteroid, function (sprite13, otherSprite12) {
-    sprites.destroy(sprite13)
-    doExplosion(otherSprite12)
-    info.changeScoreBy(1)
-})
-// Removed Weapon2 collision handlers - simplified to single player
 function doExplosion (expsprite: Sprite) {
     music.play(music.createSoundEffect(WaveShape.Noise, 1, 1534, 255, 0, 150, SoundExpressionEffect.Vibrato, InterpolationCurve.Linear), music.PlaybackMode.InBackground)
     explosion = sprites.create(assets.image`explosion-place`, SpriteKind.Explosion)
@@ -85,7 +76,6 @@ function doExplosion (expsprite: Sprite) {
     pause(150)
     sprites.destroy(expsprite)
 }
-// Removed Weapon2 collision handlers - simplified to single player
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (gamescreen == 2) {
         Shot(weaponType)
@@ -99,6 +89,18 @@ statusbars.onZero(StatusBarKind.Shield, function (status2) {
     doExplosion(starship)
     pause(1000)
     game.gameOver(false)
+})
+sprites.onOverlap(SpriteKind.Weapon, SpriteKind.Asteroid, function (sprite, otherSprite) {
+    sprites.destroy(otherSprite)
+    doExplosion(otherSprite)
+    info.changeScoreBy(1)
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.ContWeapon, function (sprite, otherSprite) {
+    sprites.destroy(otherSprite)
+    music.play(music.createSoundEffect(WaveShape.Triangle, 333, 2643, 255, 0, 496, SoundExpressionEffect.Vibrato, InterpolationCurve.Linear), music.PlaybackMode.UntilDone)
+    if (weaponType < 2) {
+        weaponType = 2
+    }
 })
 function spawnAsteroid (num3: number) {
     asteroid = sprites.create(assets.image`ast-1`, SpriteKind.Asteroid)
@@ -131,7 +133,21 @@ function spawnAsteroid (num3: number) {
     asteroid.z += -5
     asteroid.setFlag(SpriteFlag.AutoDestroy, true)
 }
-// Removed Weapon2 collision handlers - simplified to single player
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Asteroid, function (sprite, otherSprite) {
+    music.play(music.createSoundEffect(WaveShape.Noise, 1, 147, 99, 0, 404, SoundExpressionEffect.Vibrato, InterpolationCurve.Linear), music.PlaybackMode.InBackground)
+    sprites.destroyAllSpritesOfKind(SpriteKind.Shield)
+    controller.moveSprite(starship, 4, 2)
+    shieldbar.value += randint(-10, -5)
+    shielded = sprites.create(assets.image`infershield`, SpriteKind.Shield)
+    shielded.setPosition(starship.x, starship.y)
+    shielded.z += -4
+    controller.moveSprite(shielded, 4, 2)
+    doExplosion(otherSprite)
+    scene.cameraShake(10, 200)
+    pause(200)
+    sprites.destroyAllSpritesOfKind(SpriteKind.Shield)
+    controller.moveSprite(starship, 80, 30)
+})
 function Shot (num2: number) {
     if (num2 == 1) {
         laser = sprites.create(assets.image`lasershot-2x`, SpriteKind.Weapon)
@@ -148,64 +164,36 @@ function Shot (num2: number) {
         music.play(music.createSoundEffect(WaveShape.Sawtooth, 1199, 499, 255, 0, 557, SoundExpressionEffect.Warble, InterpolationCurve.Linear), music.PlaybackMode.InBackground)
     }
 }
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Asteroid, function (sprite23, otherSprite21) {
+sprites.onOverlap(SpriteKind.Player, SpriteKind.MineHoming, function (sprite, otherSprite) {
     music.play(music.createSoundEffect(WaveShape.Noise, 1, 147, 99, 0, 404, SoundExpressionEffect.Vibrato, InterpolationCurve.Linear), music.PlaybackMode.InBackground)
-    // Simplified to single player - only handle jet1
     sprites.destroyAllSpritesOfKind(SpriteKind.Shield)
     controller.moveSprite(starship, 4, 2)
-    shieldbar.value += randint(-10, -5)
-    shielded = sprites.create(assets.image`infershield`, SpriteKind.Shield)
-    shielded.setPosition(sprite23.x, sprite23.y)
-    shielded.z += -4
-    controller.moveSprite(shielded, 4, 2)
-    doExplosion(otherSprite21)
-    scene.cameraShake(10, 200)
-    pause(200)
-    sprites.destroyAllSpritesOfKind(SpriteKind.Shield)
-    controller.moveSprite(starship, 80, 30)
-})
-sprites.onOverlap(SpriteKind.Player, SpriteKind.MineHoming, function (sprite25, otherSprite23) {
-    music.play(music.createSoundEffect(WaveShape.Noise, 1, 147, 99, 0, 404, SoundExpressionEffect.Vibrato, InterpolationCurve.Linear), music.PlaybackMode.InBackground)
-    sprites.destroyAllSpritesOfKind(SpriteKind.Shield)
-    // Simplified to single player - only handle jet1    controller.player1.moveSprite(jet1, 4, 2)
     shieldbar.value += randint(-20, -15)
     shielded = sprites.create(assets.image`infershield`, SpriteKind.Shield)
-    shielded.setPosition(sprite25.x, sprite25.y)
+    shielded.setPosition(starship.x, starship.y)
     shielded.z += -4
     controller.moveSprite(shielded, 4, 2)
-    doExplosion(otherSprite23)
+    doExplosion(otherSprite)
     scene.cameraShake(10, 200)
     pause(200)
     sprites.destroyAllSpritesOfKind(SpriteKind.Shield)
     controller.moveSprite(starship, 80, 30)
 })
-sprites.onOverlap(SpriteKind.Player, SpriteKind.ContWeapon, function (sprite17, otherSprite16) {
-    sprites.destroy(otherSprite16)
-    music.play(music.createSoundEffect(WaveShape.Triangle, 333, 2643, 255, 0, 496, SoundExpressionEffect.Vibrato, InterpolationCurve.Linear), music.PlaybackMode.UntilDone)
-    // Simplified to single player - only handle jet1
-    if (weaponType < 2) {
-        weaponType = 2
-    }
-})
-// Removed Weapon2 collision handlers - simplified to single player
-sprites.onOverlap(SpriteKind.Player, SpriteKind.ContShield, function (sprite8, otherSprite7) {
-    sprites.destroy(otherSprite7)
-    // Simplified to single player - only handle jet1
-    shieldbar.value += randint(5, 20)
-    music.play(music.createSoundEffect(WaveShape.Sine, 1132, 2381, 146, 0, 444, SoundExpressionEffect.Vibrato, InterpolationCurve.Curve), music.PlaybackMode.UntilDone)
-})
-// Removed doShowTips() function - simplified game flow
-sprites.onOverlap(SpriteKind.Weapon, SpriteKind.MineHoming, function (sprite7, otherSprite6) {
-    sprites.destroy(sprite7)
-    doExplosion(otherSprite6)
+sprites.onOverlap(SpriteKind.Weapon, SpriteKind.MineHoming, function (sprite, otherSprite) {
+    sprites.destroy(otherSprite)
+    doExplosion(otherSprite)
     info.changeScoreBy(3)
+})
+sprites.onOverlap(SpriteKind.Weapon, SpriteKind.ContShield, function (sprite, otherSprite) {
+    sprites.destroy(otherSprite)
+    doExplosion(otherSprite)
 })
 let contWeapon: Sprite = null
 let stjerne: Sprite = null
 let contShield: Sprite = null
-let shielded: Sprite = null
 let plasma: Sprite = null
 let laser: Sprite = null
+let shielded: Sprite = null
 let asteroid: Sprite = null
 let explosion: Sprite = null
 let mineHoming: Sprite = null
