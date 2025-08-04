@@ -35,7 +35,7 @@ sprites.onOverlap(SpriteKind.Weapon, SpriteKind.ContWeapon, function (sprite, ot
     doExplosion(otherSprite)
 })
 function showSplash () {
-    scene.setBackgroundImage(assets.image`splash1bg`)
+    scene.setBackgroundImage(assets.image`splash_bg`)
     sprites.destroyAllSpritesOfKind(SpriteKind.Splash)
     splash1title = sprites.create(assets.image`splash_title`, SpriteKind.Splash)
     splash1title.setScale(0.9, ScaleAnchor.Middle)
